@@ -3,7 +3,7 @@ import React from 'react'
 import {Link} from 'wouter'
 import './Gif.css'
 
-export default function Gif({title, url, id}){ // Recibe las propiedades title, url e id del gif que se va a mostrar.
+function Gif({title, url, id}){ // Recibe las propiedades title, url e id del gif que se va a mostrar.
     return(
         <div className='Gif'>
             
@@ -14,3 +14,8 @@ export default function Gif({title, url, id}){ // Recibe las propiedades title, 
         </div>
     )
 }
+
+export default React.memo(Gif, (prevProps, nextProps) => {
+  console.log(prevProps, nextProps);
+  return false;
+}); // React.memo se utiliza para evitar que el componente se vuelva a renderizar si las propiedades no han cambiado.
