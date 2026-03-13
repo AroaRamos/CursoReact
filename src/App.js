@@ -1,7 +1,7 @@
 //  Este archivo es el punto de entrada a la aplicacion.
 // - Aqui se define el componente principal de la aplicacion (App) que es el que renderiza el resto de los componentes.
 
-import React, { useEffect, useState } from "react"; //Importo useEffect para manejar los efectos secundarios y useState para manejar el estado de la aplicacion.
+import React from "react"; //Importo useEffect para manejar los efectos secundarios y useState para manejar el estado de la aplicacion.
 import "./App.css";
 import Home from "./pages/Home"; // Importo el componente Home que se encuentra en la carpeta pages.
 import Detail from "./pages/Detail"; // Importo el componente Detail que se encuentra en la carpeta pages.

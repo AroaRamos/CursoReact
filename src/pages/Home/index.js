@@ -1,13 +1,13 @@
 import React, { useCallback } from "react";
-import { Link, useLocation } from "wouter";
+import { useLocation } from "wouter";
 import { useGifs } from "hooks/useGifs";
 import ListOfGifs from "components/ListOfGifs";
 import TrendingSearches from "components/TrendingSearches";
 import SearchForm from "components/SearchForm";
 
 export default function Home() {
-  const [path, pushLocation] = useLocation();
-  const { loading, gifs } = useGifs();
+  const [, pushLocation] = useLocation();
+  const { gifs } = useGifs();
 
   const handleSubmit = useCallback(({ keyword }) => {
     //Navegar a otra ruta

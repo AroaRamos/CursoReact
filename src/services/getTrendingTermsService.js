@@ -1,4 +1,4 @@
-import { API_KEY, API_URL } from './settings';
+import { API_KEY } from './settings';
 
 const fromApiResponseToGifs = apiResponse => {
   const { data = [] } = apiResponse;
