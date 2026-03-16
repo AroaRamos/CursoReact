@@ -1,49 +1,54 @@
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
-import Spinner from "components/Spinner";
-import ListOfGifs from "components/ListOfGifs";
-import { useGifs } from "hooks/useGifs";
-import useNearScreen from "hooks/useNearScreem";
-import debounce from "just-debounce-it";
-import useTitle from "hooks/useTitle";
+import React, {useCallback, useRef, useEffect} from 'react'
+import Spinner from 'components/Spinner'
+import ListOfGifs from 'components/ListOfGifs'
+import SearchForm from 'components/SearchForm'
 
-export default function SearchResults({ params }) {
-  const { keyword } = params;
-  const { loading, gifs, setPage } = useGifs({ keyword });
+import {useGifs} from 'hooks/useGifs'
+import useNearScreen from 'hooks/useNearScreen'
 
-  const externalRef = useRef(null);
+import debounce from 'just-debounce-it'
+import {Helmet} from 'react-helmet-async'
 
-  const { isNearScreen } = useNearScreen({
+export default function SearchResults ({ params }) {
+  const { keyword, rating = 'g' } = params
+  const { loading, gifs, setPage } = useGifs({ keyword, rating })
+  
+  const externalRef = useRef()
+  const {isNearScreen} = useNearScreen({
     externalRef: loading ? null : externalRef,
-    once: false,
-  });
+    once: false
+  })
 
-  const title = gifs.length ? `${gifs.length} resultados de ${decodeURI(keyword)}` : "";
-  useTitle({ title });
+  const title = gifs ? `${gifs.length} resultados de ${keyword}` : ''
 
-  const handleNextPage = useCallback(() => {
-    setPage((prevPage) => prevPage + 1);
-  }, [setPage]);
-
-  const debounceHandleNextPage = useMemo(
-    () => debounce(handleNextPage, 1000),
-    [handleNextPage]
-  );
+  const debounceHandleNextPage = useCallback(debounce(
+    () => setPage(prevPage => prevPage + 1), 200
+  ), [setPage])
 
   useEffect(function () {
-    if (isNearScreen) debounceHandleNextPage();
-  }, [debounceHandleNextPage, isNearScreen]);
+    if (isNearScreen) debounceHandleNextPage()
+  }, [debounceHandleNextPage, isNearScreen])
 
-  return (
-    <>
-      {loading ? (
-        <Spinner />
-      ) : (
-        <>
-          <h3 className="App-title">Resultados de {decodeURI(keyword)}</h3>
+  return <>
+    {loading
+      ? <Spinner />
+      : <>
+        <Helmet>
+          <title>{title}</title>
+          <meta name="description" content={title} />
+          <meta name="rating" content="General" />
+        </Helmet>
+        <header className="o-header">
+          <SearchForm initialKeyword={keyword} initialRating={rating} />
+        </header>
+        <div className="App-wrapper">
+          <h3 className="App-title">
+            {decodeURI(keyword)}
+          </h3>
           <ListOfGifs gifs={gifs} />
-          <div id="visor" ref={externalRef} />
-        </>
-      )}
-    </>
-  );
+          <div id="visor" ref={externalRef}></div>
+        </div>
+      </>
+    }
+  </>
 }

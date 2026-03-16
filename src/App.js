@@ -1,44 +1,49 @@
-//  Este archivo es el punto de entrada a la aplicacion.
-// - Aqui se define el componente principal de la aplicacion (App) que es el que renderiza el resto de los componentes.
+import React, { Suspense } from "react";
+import { Link, Route, Switch } from "wouter";
 
-import React from "react"; //Importo useEffect para manejar los efectos secundarios y useState para manejar el estado de la aplicacion.
+import Header from "components/Header";
+
+import Register from 'pages/Register'
+import Login from "pages/Login";
+import SearchResults from "pages/SearchResults";
+import Detail from "pages/Detail";
+import ErrorPage from "pages/ErrorPage";
+
+import { UserContextProvider } from "context/UserContext";
+import { GifsContextProvider } from "context/GifsContext";
+
 import "./App.css";
-import Home from "./pages/Home"; // Importo el componente Home que se encuentra en la carpeta pages.
-import Detail from "./pages/Detail"; // Importo el componente Detail que se encuentra en la carpeta pages.
-import SearchResults from "./pages/SearchResults"; // Importo el componente SearchResults que se encuentra en la carpeta pages.
-import StaticContext from "./context/StaticContext";
-import { GifsContextProvider } from "./context/GifsContext";
 
-import { Link, Route } from "wouter"; // Importo Link para crear enlaces de navegación y Route para definir las rutas de la aplicacion.
+const HomePage = React.lazy(() => import("./pages/Home"));
 
-
-// 1º exporto el componente App para que pueda ser utilizado en otros archivos. → export default
-// 2º defino el componente App que es el componente principal de la aplicacion. → function App() { ... }
 export default function App() {
   return (
-    // Envuelvo el contenido de la aplicacion en un div para poder aplicar estilos y para que React pueda renderizarlo correctamente.
-    // - Link → Componente que se utiliza para crear enlaces de navegación. El atributo 'to' define la ruta a la que se dirigirá el enlace.
-    // - Route → Componente que se utiliza para definir las rutas de la aplicacion. El atributo 'path' define la ruta y el atributo 'component' define el componente que se renderizará cuando se acceda a esa ruta.
-    //* StaticContext → Todo los elememntos que envuelve tinene acceso a ese componente
-    <StaticContext.Provider
-      value={{
-        name: 'Aroa',
-        suscribeteAlCanal: true,
-      }}
-    >
+    <UserContextProvider>
       <div className="App">
-        <section className="App-content">
-          <Link to="/">
-            <img className="App-logo" alt="Giffy logo" src="/logo.png" />
-          </Link>
-        <GifsContextProvider>
-          <Route component={Home} path="/" />
-          <Route component={SearchResults} path="/search/:keyword" />
-          <Route component={Detail} path="/gif/:id" />
-          <Route component={() => <h1>404: ERROR</h1>} path="/404" /> {/* Ruta para manejar errores 404 */}
-        </GifsContextProvider>
-        </section>
+        <Suspense fallback={null}>
+          <section className="App-content">
+            <Header />
+            <Link to="/">
+              <figure className="App-logo">
+                <img alt="Giffy logo" src="/logo.png" />
+              </figure>
+            </Link>
+            <GifsContextProvider>
+              <Switch>
+                <Route component={HomePage} path="/" />
+                <Route
+                  component={SearchResults}
+                  path="/search/:keyword/:rating?"
+                />
+                <Route component={Detail} path="/gif/:id" />
+                <Route component={Login} path="/login" />
+                <Route component={Register} path="/register" />
+                <Route component={ErrorPage} path="/:rest*" />
+              </Switch>
+            </GifsContextProvider>
+          </section>
+        </Suspense>
       </div>
-    </StaticContext.Provider>
+    </UserContextProvider>
   );
 }
